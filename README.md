@@ -31,7 +31,7 @@ The four SDLC exercises have **two prompt versions** — one for **Claude Code u
 
 Four hours is not enough time to fix a laptop. Please get through Setup at home.
 
-- **Node.js 22.13 or newer, and npm 10 or newer.** Check with `node -v` and `npm -v`. AQE 3.14 refuses to install on Node 20. Use nvm, fnm or Volta if you are pinned to an older version for work.
+- **Node.js 20 or newer, and npm 10 or newer.** Check with `node -v` and `npm -v`. AQE 3.14 declares Node 22.13 in its `engines` field, so on Node 20 npm prints an `EBADENGINE` warning and installs anyway. Verified on Node 20.20.2: install, `aqe init`, the code index and the test suite all behave identically to Node 22. The one setup that does fail is npm with `engine-strict=true`, which turns that warning into an error; there, use Node 22.13 or newer.
 - **Rights to install a global npm package.** Setup runs `npm install -g agentic-qe`. If your machine blocks that, bring a laptop that does not.
 - **A coding agent you already use, signed in and working.** Claude Code, GitHub Copilot, Cursor, AWS Kiro, OpenAI Codex CLI, Windsurf, Cline, OpenCode, Kilo Code, Roo Code or Continue.dev. AQE drives whichever one you have, through one MCP server.
 - **Your own model access.** Steps 1 to 5 spend your tokens on your own key or subscription. Step 0 spends none. Budget about what an hour of ordinary agent use costs you.
@@ -103,7 +103,7 @@ With the embedder in place you can also load the seed brain, so step 5 has subst
 
 ```bash
 aqe learning import -i seed/aqe-seed-patterns.json
-aqe learning stats     # 6 patterns across 6 domains
+aqe learning stats     # confirms the patterns are stored
 ```
 
 **5. Launch your coding agent in this folder** — Claude Code, Copilot, Cursor, Kiro, Codex, Windsurf… whichever you have. This folder is your workspace root; all paths in LAB.md are relative to it.
