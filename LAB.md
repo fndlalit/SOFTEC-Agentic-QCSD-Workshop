@@ -1,14 +1,14 @@
 # Workshop Lab — Copy-Paste Exercises
 
-Six steps on this deliberately-flawed checkout app: **build a local knowledge graph (0) → Ideation → Refinement → Development → CI/CD (1–4) → Self-Learning (5)**, then a **Personal Adoption Roadmap**. The SDLC exercises build on each other (Refinement feeds Development; CI/CD verifies) and each ends by saving its learnings; Step 5 turns those into an instant handoff brief. Everything indexes and embeds with a **local on-device model — your code never leaves your machine** — and it's scoped token-cheap for a whole room on personal keys.
+Six steps on this deliberately-flawed checkout app: **build a local knowledge graph (0) → Ideation → Refinement → Development → CI/CD (1–4) → Self-Learning (5)**, then a **Personal Adoption Roadmap**. The SDLC exercises build on each other (Refinement feeds Development; CI/CD verifies) and each ends by saving its learnings; Step 5 turns those into an instant handoff brief. Indexing is local static analysis, so **your code never leaves your machine** and step 0 costs nothing. Storing what the fleet learns needs an embedder, which is an optional install covered in the [README](./README.md); step 5 says what to do either way. The exercises are scoped token-cheap for a whole room on personal keys.
 
 **Pick your prompt — each SDLC exercise (1–4) has two versions:**
 - **Claude Code Users** — AQE skills / orchestrator (`/qcsd-ideation-swarm`, `qe-test-architect`, `qe-queen-coordinator`).
 - **Non Claude Code Users** (Copilot, Codex, Gemini, …) — the same work as a generic step list via the AQE MCP tools.
 
-Both write to the same report and end with **"Save learnings and persist patterns."** *(Steps 0 and 5 are MCP-tool calls — identical on every tool, no split.)*
+Both write to the same report and end with **"Save learnings and persist patterns."** *(Step 0 is two terminal commands and step 5 is one prompt, so both are identical on every tool and have no split.)*
 
-**Before you start:** finish the [README](./README.md) Setup (clone → `npm install -g agentic-qe@3.14.1` → `aqe init --auto --with-<your-tool>` → `npm install`), then launch your agent here. **Don't skip `aqe init`** (it installs the agents, MCP config, and memory DB) and **run the exercises in order** (3 reads 2's output; 5 recalls what 0–4 saved). Paths are relative to the repo root.
+**Before you start:** finish the [README](./README.md) Setup (clone → `npm install -g agentic-qe@3.14.1` → `aqe init --auto`, adding `--with-copilot`, `--with-cursor`, `--with-kiro` and so on for anything other than Claude Code → `npm install` → `aqe code index src/`), then launch your agent here. **Don't skip `aqe init`** (it installs the agents, MCP config, and memory DB) and **run the exercises in order** (3 reads 2's output; 5 recalls what 0–4 saved). Paths are relative to the repo root.
 
 ---
 
@@ -46,7 +46,8 @@ The two node counts differ because they count different things: the indexer repo
 /qcsd-ideation-swarm
 
 Analyze the guest-checkout epic in requirements/epic-checkout.md,
-using user-stories.md and acceptance-criteria.md for context.
+using requirements/user-stories.md and
+requirements/acceptance-criteria.md for context.
 Save all reports under reports/01-ideation-swarm/.
 Save learnings and persist patterns.
 ```
@@ -55,8 +56,8 @@ Save learnings and persist patterns.
 
 ```
 Assess the guest-checkout epic before any code is written. Read
-requirements/epic-checkout.md (with user-stories.md and
-acceptance-criteria.md for context), then:
+requirements/epic-checkout.md, with requirements/user-stories.md and
+requirements/acceptance-criteria.md for context, then:
 
 1. Recommend the quality criteria that matter most (HTSM: capability,
    reliability, security, performance, usability, …)
