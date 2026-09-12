@@ -1,6 +1,8 @@
-# NTD — Agentic QCSD Workshop
+# SOFTEC Asia 2026 · Agentic QCSD Workshop
 
-Welcome 👋 This is the official repo for the **Agentic Quality-Conscious Software Delivery (QCSD)** hands-on workshop at **Nordic Testing Days (NTD)**.
+Welcome 👋 This is the official repo for the **Agentic Quality-Conscious Software Delivery (QCSD)** hands-on workshop at **SOFTEC Asia 2026** (MSTB), Kuala Lumpur.
+
+**Session MR305 · Tuesday 15 September 2026 · 13:30 to 17:30 · Facilitator: Lalitkumar Bhamare**
 
 **Agentic QCSD** is about putting autonomous AI quality agents to work *across the whole delivery lifecycle* — not just generating tests, but reasoning about requirements, product risk, code quality, security, and accessibility the way a quality engineer would. In this session you'll drive a fleet of these agents (**[Agentic QE](https://github.com/proffesor-for-testing/agentic-qe)**) through four SDLC phases, watch what they surface *on their own*, and then judge their output with the **PACT** lens (Proactive, Autonomous, Collaborative, Targeted).
 
@@ -14,7 +16,7 @@ A short warm-up plus four SDLC exercises and a self-learning close — all copy-
 
 | Step | Agent(s) / tool | The question it answers |
 |------|-----------------|--------------------------|
-| **0 · Warm-up** | local code-index + on-device embeddings | Build a knowledge-graph map of the code and a clean memory baseline — *on your machine, no API*. |
+| **0 · Warm-up** | `aqe code index src/` (your terminal) | Build a knowledge-graph map of the code and a clean memory baseline. Runs locally, no API key, about two seconds. |
 | **1 · Ideation** | ideation gate (quality-criteria + risk + requirements) | Before any code — can a QE even do their job with these requirements? GO / CONDITIONAL / NO-GO. |
 | **2 · Refinement** | `qe-product-factors-assessor` | What is this product really made of (SFDIPOT), and where's the risk? |
 | **3 · Development** | `qe-test-architect` | Can it turn those ideas into strong, runnable tests for the riskiest module? |
@@ -25,19 +27,34 @@ The four SDLC exercises have **two prompt versions** — one for **Claude Code u
 
 ---
 
+## Before you arrive
+
+Four hours is not enough time to fix a laptop. Please get through Setup at home.
+
+- **Node.js 22.13 or newer, and npm 10 or newer.** Check with `node -v` and `npm -v`. AQE 3.14 refuses to install on Node 20. Use nvm, fnm or Volta if you are pinned to an older version for work.
+- **Rights to install a global npm package.** Setup runs `npm install -g agentic-qe`. If your machine blocks that, bring a laptop that does not.
+- **A coding agent you already use, signed in and working.** Claude Code, GitHub Copilot, Cursor, AWS Kiro, OpenAI Codex CLI, Windsurf, Cline, OpenCode, Kilo Code, Roo Code or Continue.dev. AQE drives whichever one you have, through one MCP server.
+- **Your own model access.** Steps 1 to 5 spend your tokens on your own key or subscription. Step 0 spends none. Budget about what an hour of ordinary agent use costs you.
+- **Do the whole of Setup before the session,** including `aqe code index src/`. Conference wifi and corporate proxies are the two things most likely to break it, and neither is fixable from the front of the room.
+- **Optional: a real project of your own.** The closing exercise plans adoption for your context. You do not need to open your employer's code in the room to do it.
+
+---
+
 ## Setup
 
 **1. Get this repo.** Clone it (or download the ZIP from the green **Code** button and unzip), then move into the folder:
 
 ```bash
-git clone https://github.com/fndlalit/NTD-Agentic-QCSD-Workshop
-cd NTD-Agentic-QCSD-Workshop
+git clone https://github.com/fndlalit/SOFTEC-Agentic-QCSD-Workshop
+cd SOFTEC-Agentic-QCSD-Workshop
 ```
+
+> **Clone close to your home folder.** The code indexer skips any file more than ten directories deep, so `~/SOFTEC-Agentic-QCSD-Workshop` works and `~/Documents/Conferences/2026/SOFTEC/workshops/...` silently drops the API routes from the knowledge graph.
 
 **2. Install AQE and the demo app's dependencies.** Run these once, from inside the folder:
 
 ```bash
-npm install -g agentic-qe@3.10.1   # the AQE CLI (global, one-time)
+npm install -g agentic-qe@3.14.1   # the AQE CLI (global, one-time)
 aqe init --auto                    # set up AQE for YOUR coding agent — see the table below
 npm install                        # the demo app's own dependencies
 ```
@@ -62,7 +79,34 @@ npm install                        # the demo app's own dependencies
 aqe init --auto --with-all-platforms   # or just set up everything at once
 ```
 
-**3. Launch your coding agent in this folder** — Claude Code, Copilot, Cursor, Kiro, Codex, Windsurf… whichever you have. This folder is your workspace root; all paths in LAB.md are relative to it.
+**4. Build the code knowledge graph.** Two commands in your terminal, before you open your coding agent:
+
+```bash
+aqe code index src/     # expect: 21 files indexed, 102 nodes, 117 edges, ~2s
+aqe hg stats            # the same graph, counted by node type
+aqe memory usage        # your starting baseline: 21 entries, 102 vectors
+```
+
+This is static analysis plus a local embedding model. It needs no API key and spends no tokens. Run it in the terminal rather than asking your agent to do it, so the agent does not pay to relay the output.
+
+**Optional, and your call: the memory layer.** Steps 1 to 5 each end with "Save learnings and persist patterns", and step 5 reads those patterns back. On a default install nothing is saved: AQE has no embedder, so the pattern store refuses to write and you get `VECTOR_SPACE_UNVERIFIED`. Two ways to turn it on:
+
+```bash
+npm install -g @huggingface/transformers@4.2.0   # local embedder, 384-dim all-MiniLM-L6-v2
+# or point AQE at an embedding service you already trust:
+export AQE_EMBEDDER_ENDPOINT=...
+```
+
+Read this before you run it: AQE flags that package as an explicit security opt-in, because its dependency chain currently carries two unresolved HIGH advisories (GHSA-xcpc-8h2w-3j85, GHSA-f88m-g3jw-g9cj). Skip it on a work machine. Step 5 has a fallback that works without it, and everything in steps 0 to 4 works either way.
+
+With the embedder in place you can also load the seed brain, so step 5 has substance even if an earlier step failed:
+
+```bash
+aqe learning import -i seed/aqe-seed-patterns.json
+aqe learning stats     # 6 patterns across 6 domains
+```
+
+**5. Launch your coding agent in this folder** — Claude Code, Copilot, Cursor, Kiro, Codex, Windsurf… whichever you have. This folder is your workspace root; all paths in LAB.md are relative to it.
 
 ➡️ **Next:** open **[LAB.md](./LAB.md)** and start with Exercise 1.
 

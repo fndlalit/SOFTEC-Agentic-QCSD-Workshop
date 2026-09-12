@@ -8,25 +8,31 @@ Six steps on this deliberately-flawed checkout app: **build a local knowledge gr
 
 Both write to the same report and end with **"Save learnings and persist patterns."** *(Steps 0 and 5 are MCP-tool calls — identical on every tool, no split.)*
 
-**Before you start:** finish the [README](./README.md) Setup (clone → `npm install -g agentic-qe@3.10.1` → `aqe init --auto --with-<your-tool>` → `npm install`), then launch your agent here. **Don't skip `aqe init`** (it installs the agents, MCP config, and memory DB) and **run the exercises in order** (3 reads 2's output; 5 recalls what 0–4 saved). Paths are relative to the repo root.
+**Before you start:** finish the [README](./README.md) Setup (clone → `npm install -g agentic-qe@3.14.1` → `aqe init --auto --with-<your-tool>` → `npm install`), then launch your agent here. **Don't skip `aqe init`** (it installs the agents, MCP config, and memory DB) and **run the exercises in order** (3 reads 2's output; 5 recalls what 0–4 saved). Paths are relative to the repo root.
 
 ---
 
-## Exercise 0 — Warm-up: build the local knowledge graph + baseline (≈3 min)
+## Exercise 0 — Warm-up: build the local knowledge graph + baseline (≈2 min)
 
-> *Phase:* Setup · *Why:* before the fleet reasons about your code, give it a **map** — and prove the engine runs **on your machine**. AQE indexes the repo with a local ONNX model (`all-MiniLM-L6-v2`, 384-d); **no code leaves your laptop, no API key needed.** Same prompt for every tool.
+> *Phase:* Setup · *Why:* before the fleet reasons about your code, give it a **map**. This runs entirely on your machine: static analysis plus a local embedding model, **no API key, no tokens**. Do it in your **terminal**, not through your coding agent.
 
-```
-1. Build the code knowledge graph: index src/ with AQE's code-index tool.
-   Open the saved index file (.agentic-qe/results/code-index/…json) and
-   note the node and edge counts — that's your local map of the codebase.
-2. Confirm the engine is local: get the AQE embedding stats and note the
-   model name (all-MiniLM-L6-v2) and dimension (384).
-3. Note your starting point: get AQE memory usage (total entries and
-   vectors) so you have a sense of what's there before you begin.
+```bash
+aqe code index src/
+aqe hg stats
+aqe memory usage
 ```
 
-> *Heads-up:* the code-index tool's inline summary may show `symbolsExtracted: 0` — ignore it; the **real** counts (nodes / edges) are in the saved `.agentic-qe/results/code-index/…json` file.
+**What you should see**
+
+| Command | Expected on this repo |
+|---------|----------------------|
+| `aqe code index src/` | `Files indexed: 21` · `Nodes created: 102` · `Edges created: 117` · about 2 s |
+| `aqe hg stats` | 140 nodes / 102 edges, broken down as function 80, file 26, module 22, test 12 |
+| `aqe memory usage` | Entries 21 · Vectors 102 · Namespaces 1 |
+
+The two node counts differ because they count different things: the indexer reports what it just created, `hg stats` reports every node type in the graph. Either is a fine "the map exists" check.
+
+> *Heads-up:* if you have an LLM provider configured for AQE, indexing also runs an optional relationship-extraction pass that calls the model **once per file**. On this repo that is 21 calls. If you would rather not spend them, run the index before you export any provider key, or accept it once here. Lines reading `LLM relationship extraction failed` mean that pass was skipped. The graph is still complete; only the inferred design-pattern edges are missing.
 
 ---
 
@@ -34,7 +40,7 @@ Both write to the same report and end with **"Save learnings and persist pattern
 
 > *Phase:* Ideation · *Why:* apply the QE ideation lenses to the epic and render a release gate *before a line of code is written*.
 
-**▸ Claude Code Users** — the orchestrated ideation swarm:
+**▸ Claude Code Users** — the orchestrated ideation swarm. `qcsd-ideation-swarm` is installed as a **skill**, not a command file, so if your Claude Code build does not offer it after a slash, ask for it by name instead ("Use the qcsd-ideation-swarm skill to ..."):
 
 ```
 /qcsd-ideation-swarm
@@ -183,6 +189,15 @@ Exercises 1–4; retrieve a specific one by its key if a recent learning
 hasn't surfaced yet). Save the brief to reports/05-handoff-brief.md.
 ```
 
+> *If nothing comes back:* the pattern store only persists when an embedder is configured (see the memory-layer step in the [README](./README.md)). Without one, every "Save learnings and persist patterns" above was a no-op and there is nothing to recall. Two ways forward, both legitimate:
+>
+> 1. Load the seed brain and recall from that: `aqe learning import -i seed/aqe-seed-patterns.json`, then re-run the prompt above.
+> 2. Consolidate from the reports instead: "Read reports/01 through reports/04 and write the same one-page brief to reports/05-handoff-brief.md."
+>
+> Option 2 gets you the document. Option 1 is the one that demonstrates the point, which is that the fleet reconstructs the brief without re-reading anything.
+
+> *Also expected:* lines mentioning `brain.rvf` or `VECTOR_SPACE_UNVERIFIED` during these steps. The persistent vector index stays unverified without native RuVector provenance and AQE falls back to SQLite, which is authoritative. Patterns are stored; only the ANN index is skipped. You may see `brain.rvf.corrupt-NNNN` files appear in `.agentic-qe/`. They are quarantined empty indexes, not lost data.
+
 **Why this is the benefit.** You didn't re-read four reports — the fleet reconstructed the project's institutional knowledge in seconds from what each exercise saved, and a new teammate or the next run inherits all of it instantly. *(In Claude Code this capture is automatic — the ReasoningBank hooks + the `AQE Learning: N patterns loaded…` banner.)* That's the self-learning loop: agents that **remember** beat agents that start cold.
 
 ---
@@ -213,4 +228,4 @@ The point isn't the reports — it's what you do Monday. Fill this in for *your*
 5. **One success metric (2 weeks)** — how will I know it worked? (e.g. contradictions caught *in refinement*, coverage on the riskiest module, faster GO/NO-GO calls): ______
 6. **My first step on Monday** — the single smallest thing I'll actually do: ______
 
-> Keep it small: one agent, one phase, one repo, one metric. The full fleet (30+ agents, MIT-licensed) is already on your machine from `aqe init` — nothing held back. Start where the pain is.
+> Keep it small: one agent, one phase, one repo, one metric. The full fleet (60 agents and 86 skills, MIT-licensed) is already on your machine from `aqe init`, nothing held back. Start where the pain is.
