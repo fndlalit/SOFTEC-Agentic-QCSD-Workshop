@@ -26,7 +26,7 @@ aqe memory usage
 
 | Command | Expected on this repo |
 |---------|----------------------|
-| `aqe code index src/` | `Files indexed: 21` · `Nodes created: 102` · `Edges created: 117` · about 2 s |
+| `aqe code index src/` | `Files indexed: 21` · `Nodes created: 102` · `Edges created: 117` · about 10 s |
 | `aqe hg stats` | 140 nodes / 102 edges, broken down as function 80, file 26, module 22, test 12 |
 | `aqe memory usage` | Entries 21 · Vectors 102 · Namespaces 1 |
 
@@ -195,6 +195,18 @@ hasn't surfaced yet). Save the brief to reports/05-handoff-brief.md.
 > 2. Consolidate from the reports instead: "Read reports/01 through reports/04 and write the same one-page brief to reports/05-handoff-brief.md."
 >
 > Option 2 gets you the document. Option 1 is the one that demonstrates the point, which is that the fleet reconstructs the brief without re-reading anything.
+
+> **Read the import output carefully — it under-reports.** On a machine without the native vector bindings, `aqe learning import` finishes with:
+>
+> ```
+>   Total patterns: 6
+>   Imported: 0
+>   Skipped: 6
+> ```
+>
+> **The patterns did load.** Run it with `--json` and every "skipped" entry reads `COMMITTED_PENDING_INDEX: ... RVF unavailable after authoritative pattern commit`. The pattern was written to SQLite, which is the authoritative store; only the optional ANN index could not be opened, and the CLI counts that as a skip. Verified on this repo: after that output, all six seed patterns are present in `.agentic-qe/memory.db`. Do not re-run the import and do not fall back to option 2 on the strength of `Imported: 0` — go straight to the prompt above.
+
+> *Not on Claude Code?* Claude Code captures and recalls learnings through the ReasoningBank hooks automatically. On other tools the same work goes through the `memory_store` / `memory_query` MCP tools, and in 3.14.1 that round-trip is unreliable — `memory_store` can write without returning a response, and `memory_retrieve` may not read the key back. If your agent recalls nothing, load the seed brain (option 1 above) before spending time debugging it; that is the supported path for this exercise on a non-Claude tool.
 
 > *Also expected:* lines mentioning `brain.rvf` or `VECTOR_SPACE_UNVERIFIED` during these steps. The persistent vector index stays unverified without native RuVector provenance and AQE falls back to SQLite, which is authoritative. Patterns are stored; only the ANN index is skipped. You may see `brain.rvf.corrupt-NNNN` files appear in `.agentic-qe/`. They are quarantined empty indexes, not lost data.
 
