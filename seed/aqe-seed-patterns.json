@@ -22,15 +22,34 @@
         "testType": "unit",
         "codeContext": "function",
         "complexity": "medium",
-        "relatedDomains": ["quality-assessment"],
-        "tags": ["payment-retry", "backoff", "jitter", "property-based", "invariant", "checkout"]
+        "relatedDomains": [
+          "quality-assessment"
+        ],
+        "tags": [
+          "payment-retry",
+          "backoff",
+          "jitter",
+          "property-based",
+          "invariant",
+          "checkout"
+        ]
       },
       "template": {
         "type": "code",
         "content": "it('keeps {{fn}} within its documented ceiling once jitter is added', () => {\n  for (let attempt = 0; attempt <= {{maxRetries}}; attempt++) {\n    const delay = {{fn}}(attempt, config)\n    expect(delay).toBeGreaterThanOrEqual(0)\n    expect(delay).toBeLessThanOrEqual(config.maxDelayMs)\n  }\n})",
         "variables": [
-          { "name": "fn", "type": "string", "required": true, "description": "The backoff function under test" },
-          { "name": "maxRetries", "type": "number", "required": true, "description": "Upper attempt bound to sweep" }
+          {
+            "name": "fn",
+            "type": "string",
+            "required": true,
+            "description": "The backoff function under test"
+          },
+          {
+            "name": "maxRetries",
+            "type": "number",
+            "required": true,
+            "description": "Upper attempt bound to sweep"
+          }
         ]
       }
     },
@@ -52,14 +71,29 @@
         "testType": "unit",
         "codeContext": "module",
         "complexity": "complex",
-        "relatedDomains": ["defect-intelligence", "requirements-validation"],
-        "tags": ["payment-retry", "idempotency", "double-charge", "risk", "checkout", "gateway"]
+        "relatedDomains": [
+          "defect-intelligence",
+          "requirements-validation"
+        ],
+        "tags": [
+          "payment-retry",
+          "idempotency",
+          "double-charge",
+          "risk",
+          "checkout",
+          "gateway"
+        ]
       },
       "template": {
         "type": "prompt",
         "content": "Check whether {{module}} can settle the same logical payment twice. Look for an idempotency key on the request, a dedupe store keyed by order id, or a gateway contract that guarantees it. Report the gap and the test that would catch it.",
         "variables": [
-          { "name": "module", "type": "string", "required": true, "description": "Module under assessment" }
+          {
+            "name": "module",
+            "type": "string",
+            "required": true,
+            "description": "Module under assessment"
+          }
         ]
       }
     },
@@ -81,14 +115,27 @@
         "testType": "unit",
         "codeContext": "function",
         "complexity": "medium",
-        "relatedDomains": ["coverage-analysis"],
-        "tags": ["payment-retry", "attempts", "spy", "self-reported-state", "checkout"]
+        "relatedDomains": [
+          "coverage-analysis"
+        ],
+        "tags": [
+          "payment-retry",
+          "attempts",
+          "spy",
+          "self-reported-state",
+          "checkout"
+        ]
       },
       "template": {
         "type": "code",
         "content": "const gateway = vi.fn(async () => ({ success: false, error: 'gateway_timeout' }))\nconst result = await {{fn}}(request, gateway, config)\nexpect(gateway).toHaveBeenCalledTimes(result.attempts)",
         "variables": [
-          { "name": "fn", "type": "string", "required": true, "description": "Retry entry point" }
+          {
+            "name": "fn",
+            "type": "string",
+            "required": true,
+            "description": "Retry entry point"
+          }
         ]
       }
     },
@@ -110,15 +157,34 @@
         "testType": "unit",
         "codeContext": "component",
         "complexity": "medium",
-        "relatedDomains": ["code-intelligence"],
-        "tags": ["cart", "reducer", "react-context", "coverage-gap", "complexity-hotspot", "checkout"]
+        "relatedDomains": [
+          "code-intelligence"
+        ],
+        "tags": [
+          "cart",
+          "reducer",
+          "react-context",
+          "coverage-gap",
+          "complexity-hotspot",
+          "checkout"
+        ]
       },
       "template": {
         "type": "workflow",
         "content": "1. Enumerate every action type handled by {{reducer}}\n2. Assert the state transition for each, including the unknown-action default\n3. Assert quantity and total arithmetic at the boundaries: zero, one, removal of the last line\n4. Only then test {{provider}} through the hook",
         "variables": [
-          { "name": "reducer", "type": "string", "required": true, "description": "Reducer under test" },
-          { "name": "provider", "type": "string", "required": true, "description": "Context provider" }
+          {
+            "name": "reducer",
+            "type": "string",
+            "required": true,
+            "description": "Reducer under test"
+          },
+          {
+            "name": "provider",
+            "type": "string",
+            "required": true,
+            "description": "Context provider"
+          }
         ]
       }
     },
@@ -127,8 +193,8 @@
       "patternType": "a11y-check",
       "qeDomain": "visual-accessibility",
       "domain": "visual-accessibility",
-      "name": "Checkout validation errors must be announced, not only shown",
-      "description": "CheckoutForm renders field errors visually. An error that is only colour and text is invisible to a screen reader user mid-purchase. Check that each invalid field carries aria-invalid, that its message is linked by aria-describedby, and that the error summary is in a live region. This is the accessibility check with the clearest revenue consequence on this app.",
+      "name": "Checkout errors are announced but not associated with their field",
+      "description": "In src/components/CheckoutForm.tsx every validation error already renders with role=\"alert\", so screen readers do announce it. The gap is the association: the inputs carry no aria-describedby pointing at their error element, and the source marks this at the gdprConsent field with a \"QUALITY GAP: Missing aria-describedby for WCAG 2.2 AA compliance\" comment. An accessibility assessment that reports \"errors are not announced\" is wrong about this code.",
       "confidence": 0.85,
       "usageCount": 3,
       "successRate": 1,
@@ -140,15 +206,34 @@
         "testType": "unit",
         "codeContext": "component",
         "complexity": "medium",
-        "relatedDomains": ["quality-assessment"],
-        "tags": ["accessibility", "wcag", "aria-invalid", "aria-describedby", "live-region", "checkout-form"]
+        "relatedDomains": [
+          "quality-assessment"
+        ],
+        "tags": [
+          "accessibility",
+          "wcag",
+          "aria-invalid",
+          "aria-describedby",
+          "live-region",
+          "checkout-form"
+        ]
       },
       "template": {
         "type": "code",
         "content": "expect(screen.getByLabelText(/{{field}}/i)).toHaveAttribute('aria-invalid', 'true')\nexpect(screen.getByLabelText(/{{field}}/i)).toHaveAccessibleDescription(/{{message}}/i)",
         "variables": [
-          { "name": "field", "type": "string", "required": true, "description": "Field label" },
-          { "name": "message", "type": "string", "required": true, "description": "Expected error text" }
+          {
+            "name": "field",
+            "type": "string",
+            "required": true,
+            "description": "Field label"
+          },
+          {
+            "name": "message",
+            "type": "string",
+            "required": true,
+            "description": "Expected error text"
+          }
         ]
       }
     },
@@ -170,14 +255,28 @@
         "testType": "unit",
         "codeContext": "function",
         "complexity": "simple",
-        "relatedDomains": ["test-generation"],
-        "tags": ["validation", "currency", "luhn", "requirements-gap", "testability", "checkout"]
+        "relatedDomains": [
+          "test-generation"
+        ],
+        "tags": [
+          "validation",
+          "currency",
+          "luhn",
+          "requirements-gap",
+          "testability",
+          "checkout"
+        ]
       },
       "template": {
         "type": "prompt",
         "content": "For every use of the word valid in {{artifact}}, state whether it means well formed or genuine, and name the test that distinguishes them.",
         "variables": [
-          { "name": "artifact", "type": "string", "required": true, "description": "Requirement or AC document" }
+          {
+            "name": "artifact",
+            "type": "string",
+            "required": true,
+            "description": "Requirement or AC document"
+          }
         ]
       }
     }
