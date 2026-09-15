@@ -195,31 +195,11 @@ Exercises 1–4; retrieve a specific one by its key if a recent learning
 hasn't surfaced yet). Save the brief to reports/05-handoff-brief.md.
 ```
 
-> *If nothing comes back:* the embedder from [setup step 5](./README.md) is what lets the pattern store write. Skip that step and every "Save learnings and persist patterns" above was a no-op, so there is nothing to recall. Two ways forward from here:
->
-> 1. Load the seed brain and recall from that: `aqe learning import -i seed/aqe-seed-patterns.json`, then re-run the prompt above.
-> 2. Consolidate from the reports instead: "Read reports/01 through reports/04 and write the same one-page brief to reports/05-handoff-brief.md."
->
-> Option 2 gets you the document. Option 1 is the one that demonstrates the point, which is that the fleet reconstructs the brief without re-reading anything.
+> *What you will see along the way:* lines mentioning `brain.rvf` or `VECTOR_SPACE_UNVERIFIED`, and possibly `brain.rvf.corrupt-NNNN` files in `.agentic-qe/`. Both are expected. The optional vector index is skipped and AQE falls back to SQLite, which is the authoritative store — your patterns are saved either way.
 
-> **The import output looks the same whether it worked or not.** `aqe learning import` always finishes with:
->
-> ```
->   Total patterns: 6
->   Imported: 0
->   Skipped: 6
-> ```
->
-> The CLI counts a pattern as "skipped" whenever the optional ANN index cannot be opened, even when SQLite — the authoritative store — took the write. So `Imported: 0` tells you nothing either way. **Check with `aqe learning stats`:**
->
-> - **`Total: 0`** — there is no embedder, nothing was stored and nothing will be. Install it (setup step 5 in the [README](./README.md)) and re-run the import, or take option 2 above.
-> - **`Total: 76`** — it worked: AQE's own foundational patterns plus your six. Go straight to the prompt above; do not re-run the import.
->
-> Both cases verified on this repo with agentic-qe 3.14.1, on the same machine with the embedder present and absent.
+> *If nothing comes back:* run `aqe learning stats`. It should read **`Total: 76`** — AQE's own foundational patterns plus the six from your exercises. If it reads `Total: 0`, setup step 5 was skipped, so nothing was ever persisted: install the embedder and run `aqe learning import -i seed/aqe-seed-patterns.json`. Short on time, consolidate from what you already have instead: *"Read reports/01 through reports/04 and write the same one-page brief to reports/05-handoff-brief.md."* See [TROUBLESHOOTING.md](./TROUBLESHOOTING.md) if you want the detail.
 
-> *Not on Claude Code?* Claude Code captures and recalls learnings through the ReasoningBank hooks automatically. On other tools the same work goes through the `memory_store` / `memory_query` MCP tools, and in 3.14.1 that round-trip is unreliable — `memory_store` can write without returning a response, and `memory_retrieve` may not read the key back. If your agent recalls nothing, load the seed brain (option 1 above) and confirm with `aqe learning stats` that the Total reads 76 before spending time debugging anything else; that is the supported path for this exercise on a non-Claude tool.
-
-> *Also expected:* lines mentioning `brain.rvf` or `VECTOR_SPACE_UNVERIFIED` during these steps. The persistent vector index stays unverified without native RuVector provenance and AQE falls back to SQLite, which is authoritative. Patterns are stored; only the ANN index is skipped. You may see `brain.rvf.corrupt-NNNN` files appear in `.agentic-qe/`. They are quarantined empty indexes, not lost data.
+> *Not on Claude Code?* Claude Code captures and recalls learnings automatically through the ReasoningBank hooks. Other tools route the same work through the `memory_store` / `memory_query` MCP tools. If your agent recalls nothing there, load the seed brain above and check that `aqe learning stats` reads 76 before debugging anything else.
 
 **Why this is the benefit.** You didn't re-read four reports — the fleet reconstructed the project's institutional knowledge in seconds from what each exercise saved, and a new teammate or the next run inherits all of it instantly. *(In Claude Code this capture is automatic — the ReasoningBank hooks + the `AQE Learning: N patterns loaded…` banner.)* That's the self-learning loop: agents that **remember** beat agents that start cold.
 
