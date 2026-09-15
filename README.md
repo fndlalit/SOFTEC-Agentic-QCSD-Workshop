@@ -82,7 +82,7 @@ aqe init --auto --with-all-platforms   # or just set up everything at once
 **4. Build the code knowledge graph.** Two commands in your terminal, before you open your coding agent:
 
 ```bash
-aqe code index src/     # expect: 21 files indexed, 102 nodes, 117 edges, ~2s
+aqe code index src/     # expect: 21 files indexed, 102 nodes, 117 edges, ~10s
 aqe hg stats            # the same graph, counted by node type
 aqe memory usage        # your starting baseline: 21 entries, 102 vectors
 ```
@@ -103,7 +103,7 @@ With the embedder in place you can also load the seed brain, so step 5 has subst
 
 ```bash
 aqe learning import -i seed/aqe-seed-patterns.json
-aqe learning stats     # 6 patterns across 6 domains
+aqe learning stats     # Total jumps from 0 to 76: AQE's own patterns plus your six
 ```
 
 **5. Launch your coding agent in this folder** — Claude Code, Copilot, Cursor, Kiro, Codex, Windsurf… whichever you have. This folder is your workspace root; all paths in LAB.md are relative to it.
