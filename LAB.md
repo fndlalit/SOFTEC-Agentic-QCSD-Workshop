@@ -181,10 +181,6 @@ and decide on release. Do NOT generate tests — assess what exists:
 
 ## Exercise 5 — Self-Learning: put the fleet's memory to work (≈10 min)
 
-> **Start here:** `aqe learning stats`. If **Total is 0**, nothing was ever persisted and the
-> prompt below cannot work — go straight to the import or to option 2 under it. If Total is 76,
-> the recall prompt will work; run it.
-
 > *Why:* every exercise above ended with **"Save learnings and persist patterns."** Now feel the payoff — the fleet didn't just file those away, it can hand them back **consolidated, on demand**. That's institutional knowledge working *for* you. Same prompt for every tool.
 
 ```
@@ -199,14 +195,12 @@ Exercises 1–4; retrieve a specific one by its key if a recent learning
 hasn't surfaced yet). Save the brief to reports/05-handoff-brief.md.
 ```
 
-> *If nothing comes back:* the pattern store only persists when an embedder is configured (see the memory-layer step in the [README](./README.md)). Without one, every "Save learnings and persist patterns" above was a no-op and there is nothing to recall. Two ways forward, both legitimate:
+> *If nothing comes back:* the embedder from [setup step 5](./README.md) is what lets the pattern store write. Skip that step and every "Save learnings and persist patterns" above was a no-op, so there is nothing to recall. Two ways forward from here:
 >
 > 1. Load the seed brain and recall from that: `aqe learning import -i seed/aqe-seed-patterns.json`, then re-run the prompt above.
 > 2. Consolidate from the reports instead: "Read reports/01 through reports/04 and write the same one-page brief to reports/05-handoff-brief.md."
 >
 > Option 2 gets you the document. Option 1 is the one that demonstrates the point, which is that the fleet reconstructs the brief without re-reading anything.
->
-> **Stop rule:** if you do not have a brief within four minutes, take option 2 and move on. The brief is the point of this exercise; the memory layer is how it is *meant* to be produced, not a prerequisite for finishing.
 
 > **The import output looks the same whether it worked or not.** `aqe learning import` always finishes with:
 >
@@ -218,12 +212,12 @@ hasn't surfaced yet). Save the brief to reports/05-handoff-brief.md.
 >
 > The CLI counts a pattern as "skipped" whenever the optional ANN index cannot be opened, even when SQLite — the authoritative store — took the write. So `Imported: 0` tells you nothing either way. **Check with `aqe learning stats`:**
 >
-> - **`Total: 0`** — there is no embedder, nothing was stored and nothing will be. Install it (the memory-layer step in the [README](./README.md)) and re-run the import, or take option 2 above.
+> - **`Total: 0`** — there is no embedder, nothing was stored and nothing will be. Install it (setup step 5 in the [README](./README.md)) and re-run the import, or take option 2 above.
 > - **`Total: 76`** — it worked: AQE's own foundational patterns plus your six. Go straight to the prompt above; do not re-run the import.
 >
 > Both cases verified on this repo with agentic-qe 3.14.1, on the same machine with the embedder present and absent.
 
-> *Not on Claude Code?* Claude Code captures and recalls learnings through the ReasoningBank hooks automatically. On other tools the same work goes through the `memory_store` / `memory_query` MCP tools, and in 3.14.1 that round-trip is unreliable — `memory_store` can write without returning a response, and `memory_retrieve` may not read the key back. If your agent recalls nothing, load the seed brain (option 1 above) and confirm with `aqe learning stats` that the Total is not 0 before spending time debugging anything else; that is the supported path for this exercise on a non-Claude tool.
+> *Not on Claude Code?* Claude Code captures and recalls learnings through the ReasoningBank hooks automatically. On other tools the same work goes through the `memory_store` / `memory_query` MCP tools, and in 3.14.1 that round-trip is unreliable — `memory_store` can write without returning a response, and `memory_retrieve` may not read the key back. If your agent recalls nothing, load the seed brain (option 1 above) and confirm with `aqe learning stats` that the Total reads 76 before spending time debugging anything else; that is the supported path for this exercise on a non-Claude tool.
 
 > *Also expected:* lines mentioning `brain.rvf` or `VECTOR_SPACE_UNVERIFIED` during these steps. The persistent vector index stays unverified without native RuVector provenance and AQE falls back to SQLite, which is authoritative. Patterns are stored; only the ANN index is skipped. You may see `brain.rvf.corrupt-NNNN` files appear in `.agentic-qe/`. They are quarantined empty indexes, not lost data.
 

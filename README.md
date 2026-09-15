@@ -89,7 +89,7 @@ aqe memory usage        # your starting baseline: 21 entries, 102 vectors
 
 This is static analysis plus a local embedding model. It needs no API key and spends no tokens. Run it in the terminal rather than asking your agent to do it, so the agent does not pay to relay the output.
 
-**Optional, and your call: the memory layer.** Steps 1 to 5 each end with "Save learnings and persist patterns", and step 5 reads those patterns back. On a default install nothing is saved: AQE has no embedder, so the pattern store refuses to write and you get `VECTOR_SPACE_UNVERIFIED`. Two ways to turn it on:
+**5. Install the embedder.** AQE persists what the agents learn as patterns in a vector store, and the store needs an embedding model to write to. Without one it refuses the write and reports `VECTOR_SPACE_UNVERIFIED`, so every "Save learnings and persist patterns" in the exercises is a no-op and Exercise 5 has nothing to read back.
 
 ```bash
 npm install -g @huggingface/transformers@4.2.0   # local embedder, 384-dim all-MiniLM-L6-v2
@@ -97,16 +97,16 @@ npm install -g @huggingface/transformers@4.2.0   # local embedder, 384-dim all-M
 export AQE_EMBEDDER_ENDPOINT=...
 ```
 
-Read this before you run it: AQE flags that package as an explicit security opt-in, because its dependency chain currently carries two unresolved HIGH advisories (GHSA-xcpc-8h2w-3j85, GHSA-f88m-g3jw-g9cj). Skip it on a work machine. Step 5 has a fallback that works without it, and everything in steps 0 to 4 works either way.
+AQE treats this package as an explicit security opt-in: its dependency chain currently carries two unresolved HIGH advisories (GHSA-xcpc-8h2w-3j85, GHSA-f88m-g3jw-g9cj). On a machine where you cannot install it, use the endpoint variable above, or run Exercise 5 from the reports as described in LAB.md.
 
-With the embedder in place you can also load the seed brain, so step 5 has substance even if an earlier step failed:
+Confirm it took, and load the seed brain so Exercise 5 has substance even if an earlier exercise failed:
 
 ```bash
 aqe learning import -i seed/aqe-seed-patterns.json
 aqe learning stats     # Total jumps from 0 to 76: AQE's own patterns plus your six
 ```
 
-**5. Launch your coding agent in this folder** — Claude Code, Copilot, Cursor, Kiro, Codex, Windsurf… whichever you have. This folder is your workspace root; all paths in LAB.md are relative to it.
+**6. Launch your coding agent in this folder** — Claude Code, Copilot, Cursor, Kiro, Codex, Windsurf… whichever you have. This folder is your workspace root; all paths in LAB.md are relative to it.
 
 ➡️ **Next:** open **[LAB.md](./LAB.md)** and start with Exercise 1.
 
