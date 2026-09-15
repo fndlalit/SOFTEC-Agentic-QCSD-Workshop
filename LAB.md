@@ -6,7 +6,7 @@ Six steps on this deliberately-flawed checkout app: **build a local knowledge gr
 - **Claude Code Users** — AQE skills / orchestrator (`/qcsd-ideation-swarm`, `qe-test-architect`, `qe-queen-coordinator`).
 - **Non Claude Code Users** (Copilot, Codex, Gemini, …) — the same work as a generic step list via the AQE MCP tools.
 
-Both write to the same report and end with **"Save learnings and persist patterns."** *(Steps 0 and 5 are MCP-tool calls — identical on every tool, no split.)*
+Both write to the same report and end with **"Save learnings and persist patterns."** *(Step 0 is three terminal commands and step 5 is one prompt, so both are identical on every tool and have no split.)*
 
 **Before you start:** finish the [README](./README.md) Setup (clone → `npm install -g agentic-qe@3.14.1` → `aqe init --auto --with-<your-tool>` → `npm install`), then launch your agent here. **Don't skip `aqe init`** (it installs the agents, MCP config, and memory DB) and **run the exercises in order** (3 reads 2's output; 5 recalls what 0–4 saved). Paths are relative to the repo root.
 
@@ -46,7 +46,8 @@ The two node counts differ because they count different things: the indexer repo
 /qcsd-ideation-swarm
 
 Analyze the guest-checkout epic in requirements/epic-checkout.md,
-using user-stories.md and acceptance-criteria.md for context.
+using requirements/user-stories.md and
+requirements/acceptance-criteria.md for context.
 Save all reports under reports/01-ideation-swarm/.
 Save learnings and persist patterns.
 ```
@@ -55,8 +56,8 @@ Save learnings and persist patterns.
 
 ```
 Assess the guest-checkout epic before any code is written. Read
-requirements/epic-checkout.md (with user-stories.md and
-acceptance-criteria.md for context), then:
+requirements/epic-checkout.md (with requirements/user-stories.md and
+requirements/acceptance-criteria.md for context), then:
 
 1. Recommend the quality criteria that matter most (HTSM: capability,
    reliability, security, performance, usability, …)
@@ -173,7 +174,7 @@ and decide on release. Do NOT generate tests — assess what exists:
 
 ---
 
-## Exercise 5 — Self-Learning: put the fleet's memory to work (≈5 min)
+## Exercise 5 — Self-Learning: put the fleet's memory to work (≈10 min)
 
 > *Why:* every exercise above ended with **"Save learnings and persist patterns."** Now feel the payoff — the fleet didn't just file those away, it can hand them back **consolidated, on demand**. That's institutional knowledge working *for* you. Same prompt for every tool.
 
@@ -196,7 +197,7 @@ hasn't surfaced yet). Save the brief to reports/05-handoff-brief.md.
 >
 > Option 2 gets you the document. Option 1 is the one that demonstrates the point, which is that the fleet reconstructs the brief without re-reading anything.
 
-> **Read the import output carefully — it under-reports.** On a machine without the native vector bindings, `aqe learning import` finishes with:
+> **The import output looks the same whether it worked or not.** `aqe learning import` always finishes with:
 >
 > ```
 >   Total patterns: 6
@@ -204,9 +205,14 @@ hasn't surfaced yet). Save the brief to reports/05-handoff-brief.md.
 >   Skipped: 6
 > ```
 >
-> **The patterns did load.** Run it with `--json` and every "skipped" entry reads `COMMITTED_PENDING_INDEX: ... RVF unavailable after authoritative pattern commit`. The pattern was written to SQLite, which is the authoritative store; only the optional ANN index could not be opened, and the CLI counts that as a skip. Verified on this repo: after that output, all six seed patterns are present in `.agentic-qe/memory.db`. Do not re-run the import and do not fall back to option 2 on the strength of `Imported: 0` — go straight to the prompt above.
+> The CLI counts a pattern as "skipped" whenever the optional ANN index cannot be opened, even when SQLite — the authoritative store — took the write. So `Imported: 0` tells you nothing either way. **Check with `aqe learning stats`:**
+>
+> - **`Total: 0`** — there is no embedder, nothing was stored and nothing will be. Install it (the memory-layer step in the [README](./README.md)) and re-run the import, or take option 2 above.
+> - **`Total: 76`** — it worked: AQE's own foundational patterns plus your six. Go straight to the prompt above; do not re-run the import.
+>
+> Both cases verified on this repo with agentic-qe 3.14.1, on the same machine with the embedder present and absent.
 
-> *Not on Claude Code?* Claude Code captures and recalls learnings through the ReasoningBank hooks automatically. On other tools the same work goes through the `memory_store` / `memory_query` MCP tools, and in 3.14.1 that round-trip is unreliable — `memory_store` can write without returning a response, and `memory_retrieve` may not read the key back. If your agent recalls nothing, load the seed brain (option 1 above) before spending time debugging it; that is the supported path for this exercise on a non-Claude tool.
+> *Not on Claude Code?* Claude Code captures and recalls learnings through the ReasoningBank hooks automatically. On other tools the same work goes through the `memory_store` / `memory_query` MCP tools, and in 3.14.1 that round-trip is unreliable — `memory_store` can write without returning a response, and `memory_retrieve` may not read the key back. If your agent recalls nothing, load the seed brain (option 1 above) and confirm with `aqe learning stats` that the Total is not 0 before spending time debugging anything else; that is the supported path for this exercise on a non-Claude tool.
 
 > *Also expected:* lines mentioning `brain.rvf` or `VECTOR_SPACE_UNVERIFIED` during these steps. The persistent vector index stays unverified without native RuVector provenance and AQE falls back to SQLite, which is authoritative. Patterns are stored; only the ANN index is skipped. You may see `brain.rvf.corrupt-NNNN` files appear in `.agentic-qe/`. They are quarantined empty indexes, not lost data.
 
