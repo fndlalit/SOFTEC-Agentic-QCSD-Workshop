@@ -184,16 +184,20 @@ and decide on release. Do NOT generate tests — assess what exists:
 > *Why:* every exercise above ended with **"Save learnings and persist patterns."** Now feel the payoff — the fleet didn't just file those away, it can hand them back **consolidated, on demand**. That's institutional knowledge working *for* you. Same prompt for every tool.
 
 ```
-Recall what the fleet has learned about this checkout app and consolidate
-it into a one-page brief — top risks, testability gaps, contradictions,
-and the release verdict — framed as either:
+Recall from AQE memory what the fleet learned about this checkout app
+across Exercises 1–4 — payment retry, cart state, checkout form
+accessibility, and request validation.
+
+First list what you recalled: each pattern's name and one line on what it
+says. Then consolidate that into a one-page brief — top risks, testability
+gaps, contradictions, and the release verdict — framed as either:
   • an onboarding brief for someone joining the project today, or
   • a handoff document for the next person enhancing the checkout app.
 
-Pull the learnings from AQE memory (the patterns persisted across
-Exercises 1–4; retrieve a specific one by its key if a recent learning
-hasn't surfaced yet). Save the brief to reports/05-handoff-brief.md.
+Save the brief to reports/05-handoff-brief.md.
 ```
+
+> *Read the list before the brief.* It should name this codebase — `payment-retry.ts`, `CartContext.tsx`, `CheckoutForm.tsx`. A list of generic testing patterns (AAA unit tests, risk-based coverage) means the recall went wide: the store holds AQE's own 70 foundational patterns alongside the ones from your exercises. Re-run naming the module you care about, or take the reports route below.
 
 > *What you will see along the way:* lines mentioning `brain.rvf` or `VECTOR_SPACE_UNVERIFIED`, and possibly `brain.rvf.corrupt-NNNN` files in `.agentic-qe/`. Both are expected. The optional vector index is skipped and AQE falls back to SQLite, which is the authoritative store — your patterns are saved either way.
 
