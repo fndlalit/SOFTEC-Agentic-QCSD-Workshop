@@ -170,11 +170,20 @@ and decide on release. Do NOT generate tests — assess what exists:
 6. Save learnings and persist patterns
 ```
 
+> *Expected coverage:* `npm run test:coverage` reports **61.62% overall** on `src/`, and
+> **100% of statements / 97.29% of branches on `src/lib/payment-retry.ts`** — before Exercise 3
+> adds a single test. The 90% gate therefore passes. Read the module anyway. If you see roughly
+> **38%** overall, your clone predates the test-scope fix — `git pull` and re-run.
+
 > *Note:* this app keeps its testable logic in `src/lib/` (payment, Luhn, validation, rate-limiting, email) — there is **no `src/services/`**. Scoped to one file so the run finishes fast; widen to `src/lib/` for a broader verification.
 
 ---
 
 ## Exercise 5 — Self-Learning: put the fleet's memory to work (≈10 min)
+
+> **Start here:** `aqe learning stats`. If **Total is 0**, nothing was ever persisted and the
+> prompt below cannot work — go straight to the import or to option 2 under it. If Total is 76,
+> the recall prompt will work; run it.
 
 > *Why:* every exercise above ended with **"Save learnings and persist patterns."** Now feel the payoff — the fleet didn't just file those away, it can hand them back **consolidated, on demand**. That's institutional knowledge working *for* you. Same prompt for every tool.
 
@@ -196,6 +205,8 @@ hasn't surfaced yet). Save the brief to reports/05-handoff-brief.md.
 > 2. Consolidate from the reports instead: "Read reports/01 through reports/04 and write the same one-page brief to reports/05-handoff-brief.md."
 >
 > Option 2 gets you the document. Option 1 is the one that demonstrates the point, which is that the fleet reconstructs the brief without re-reading anything.
+>
+> **Stop rule:** if you do not have a brief within four minutes, take option 2 and move on. The brief is the point of this exercise; the memory layer is how it is *meant* to be produced, not a prerequisite for finishing.
 
 > **The import output looks the same whether it worked or not.** `aqe learning import` always finishes with:
 >
